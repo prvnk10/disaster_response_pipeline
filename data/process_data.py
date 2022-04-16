@@ -19,8 +19,9 @@ def clean_data(df):
     
     row = categories.iloc[0]
     category_colnames = list(row.apply(lambda x: x[:-2]))
-    
+
     categories.columns = category_colnames
+
 
     for column in categories:
         # set each value to be the last character of the string
@@ -28,6 +29,9 @@ def clean_data(df):
     
         # convert column from string to numeric
         categories[column] = categories[column].apply(pd.to_numeric)
+
+    ## replace the class 2 as 1 (assuming 2 as 1 as shared in the project feedback.. :))
+    categories.replace(2, 1, inplace=True)        
 
     # drop the original categories column from `df`
     df.drop("categories", axis=1, inplace=True)
@@ -41,7 +45,7 @@ def save_data(df, database_filename):
     """Saves the cleaned dataframe to a table messages in the database given"""
 
     engine = create_engine('sqlite:///'+ database_filename)
-    df.to_sql('messages', engine, index=False)      
+    df.to_sql('messages', engine, index=False, if_exists="replace") 
 
 
 def main():
